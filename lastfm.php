@@ -16,11 +16,12 @@ class LastFMTopArtistsWidget extends WP_Widget {
         $this->WP_Widget('LastFMTopArtistsWidget', 'Top LastFM Artists', $widget_ops);
     }
     function form($instance) {
-    $instance = wp_parse_args( (array) $instance, array( 'username' => '', 'latestx' => '5', 'typeof' => 'Top Artists', 'timeframe' => 'overall' ) );
+    $instance = wp_parse_args( (array) $instance, array( 'username' => '', 'latestx' => '5', 'typeof' => 'Top Artists', 'timeframe' => 'overall', 'author' => 'yes' ) );
     $username = $instance['username'];
     $latestx = $instance['latestx'];
     $typeof = $instance['typeof'];
     $timeframe = $instance['timeframe'];
+    $author = $instance['author'];
 ?>
         <p><label for="<?php echo $this->get_field_id('username'); ?>">Username: <input class="widefat" id="<?php echo $this->get_field_id('username'); ?>" name="<?php echo $this->get_field_name('username'); ?>" type="text" value="<?php echo attribute_escape($username); ?>" /></label></p>
         <p><label for="<?php echo $this->get_field_id('latestx'); ?>">Number of Artists to show: <input class="widefat" id="<?php echo $this->get_field_id('latestx'); ?>" name="<?php echo $this->get_field_name('latestx'); ?>" type="text" value="<?php echo attribute_escape($latestx); ?>" /></label></p>
@@ -41,7 +42,7 @@ class LastFMTopArtistsWidget extends WP_Widget {
             <option value="7day">Last 7 Days</option>
         </select>
         </p>
-
+        <p><label for="<?php echo $this->get_field_id('author'); ?>">Display Widget Author: (yes/no)<input class="widefat" id="<?php echo $this->get_field_id('author'); ?>" name="<?php echo $this->get_field_name('author'); ?>" type="text" value="<?php echo attribute_escape($author); ?>" /></label></p>
 
 
 <?php }
@@ -52,6 +53,7 @@ class LastFMTopArtistsWidget extends WP_Widget {
         $instance['latestx'] = $new_instance['latestx'];
         $instance['typeof'] = $new_instance['typeof'];
         $instance['timeframe'] = $new_instance['timeframe'];
+        $instance['author'] = $new_instance['author'];
         return $instance;
     }   
     
@@ -62,6 +64,7 @@ class LastFMTopArtistsWidget extends WP_Widget {
         $latestx = empty($instance['latestx']) ? ' ' : apply_filters('widget_latestx', $instance['latestx']);
         $typeof = empty($instance['typeof']) ? ' ' : apply_filters('widget_typeof', $instance['typeof']);
         $timeframe = empty($instance['timeframe']) ? ' ' : apply_filters('widget_timeframe', $instance['timeframe']);
+        $author = empty($instance['author']) ? ' ' : apply_filters('widget_author', $instance['author']);        
 
 $lfm = file_get_contents('http://ws.audioscrobbler.com/2.0/user/' . $username . '/top' . $typeof . '.xml?period=' . $timeframe . '&limit=' . $latestx);
 echo "<h1>Top " . $latestx . " " . $typeof . "</h1>";
@@ -89,10 +92,12 @@ foreach($lfmA as $lfmV) {
         echo '<img height="23px" width="34px" src="' . $lfmV['_c']['image']['0']['_v'] . '"> <a href="' . $lfmV['_c']['url']['_v'] . '">' . $lfmV['_c']['name']['_v'] . '</a> [' . $lfmV['_c']['playcount']['_v'] . ']<br>';
     }
 }
-
-
-
-
+if ($author == 'no') {
+    $display = 'style="display: none"';
+} else {
+    $display = '';
+}
+echo '<span ' . $display . '> Widget by <a href="http://sixteenink.com">alairock</a></span>';
 
 echo $after_widget;
 }
