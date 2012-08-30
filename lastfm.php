@@ -4,7 +4,7 @@
  * Plugin Name: LastFM Top Artists
  * Plugin URI: http://wordpress.org/extend/plugins/lastfm-top-artists/
  * Description: Displays the top LastFM artists for a particular user.
- * Version: 0.1
+ * Version: 0.2.0
  * Author: alairock
  * Author URI: http://sixteenink.com
  * License: GPL2
@@ -16,12 +16,31 @@ class LastFMTopArtistsWidget extends WP_Widget {
         $this->WP_Widget('LastFMTopArtistsWidget', 'Top LastFM Artists', $widget_ops);
     }
     function form($instance) {
-    $instance = wp_parse_args( (array) $instance, array( 'username' => '', 'latestx' => '5' ) );
+    $instance = wp_parse_args( (array) $instance, array( 'username' => '', 'latestx' => '5', 'typeof' => 'Top Artists', 'timeframe' => 'overall' ) );
     $username = $instance['username'];
     $latestx = $instance['latestx'];
+    $typeof = $instance['typeof'];
+    $timeframe = $instance['timeframe'];
 ?>
         <p><label for="<?php echo $this->get_field_id('username'); ?>">Username: <input class="widefat" id="<?php echo $this->get_field_id('username'); ?>" name="<?php echo $this->get_field_name('username'); ?>" type="text" value="<?php echo attribute_escape($username); ?>" /></label></p>
         <p><label for="<?php echo $this->get_field_id('latestx'); ?>">Number of Artists to show: <input class="widefat" id="<?php echo $this->get_field_id('latestx'); ?>" name="<?php echo $this->get_field_name('latestx'); ?>" type="text" value="<?php echo attribute_escape($latestx); ?>" /></label></p>
+        <p><select class="widefat" id="<?php echo $this->get_field_id('typeof'); ?>" name="<?php echo $this->get_field_name('typeof'); ?>">
+            <option value="<?php echo attribute_escape($typeof); ?>"><?php echo attribute_escape($typeof); ?></option>
+            <option value="tracks">Top Tracks</option>
+            <option value="artists">Top Artists</option>
+            <option value="albums">Top Albums</option>
+        </select>
+        </p>    
+
+        <p><select class="widefat" id="<?php echo $this->get_field_id('timeframe'); ?>" name="<?php echo $this->get_field_name('timeframe'); ?>">
+            <option value="<?php echo attribute_escape($timeframe); ?>"><?php echo attribute_escape($timeframe); ?></option>
+            <option value="overall">overall</option>
+            <option value="12month">Last 12 Months</option>
+            <option value="6month">Last 6 Months</option>
+            <option value="3month">Last 3 Months</option>
+            <option value="7day">Last 7 Days</option>
+        </select>
+        </p>
 
 
 
@@ -31,6 +50,8 @@ class LastFMTopArtistsWidget extends WP_Widget {
         $instance = $old_instance;
         $instance['username'] = $new_instance['username'];
         $instance['latestx'] = $new_instance['latestx'];
+        $instance['typeof'] = $new_instance['typeof'];
+        $instance['timeframe'] = $new_instance['timeframe'];
         return $instance;
     }   
     
@@ -39,20 +60,42 @@ class LastFMTopArtistsWidget extends WP_Widget {
         echo $before_widget;
         $username = empty($instance['username']) ? ' ' : apply_filters('widget_username', $instance['username']);
         $latestx = empty($instance['latestx']) ? ' ' : apply_filters('widget_latestx', $instance['latestx']);
+        $typeof = empty($instance['typeof']) ? ' ' : apply_filters('widget_typeof', $instance['typeof']);
+        $timeframe = empty($instance['timeframe']) ? ' ' : apply_filters('widget_timeframe', $instance['timeframe']);
 
-                            
-        echo "<h1>Top " . $latestx . " Artists</h1>";
-        
-$lfm = file_get_contents('http://ws.audioscrobbler.com/2.0/user/' . $username . '/topartists.xml?period=12month&limit=' . $latestx);
+$lfm = file_get_contents('http://ws.audioscrobbler.com/2.0/user/' . $username . '/top' . $typeof . '.xml?period=' . $timeframe . '&limit=' . $latestx);
+echo "<h1>Top " . $latestx . " " . $typeof . "</h1>";
+//Artists
+if ($typeof == 'artists') {
+    $lfmA = $this->xml2ary($lfm);
+    $lfmA = $lfmA['topartists']['_c']['artist'];
+    foreach($lfmA as $lfmV) {
+        echo '<img height="23px" width="34px" src="' . $lfmV['_c']['image']['0']['_v'] . '"> <a href="' . $lfmV['_c']['url']['_v'] . '">' . $lfmV['_c']['name']['_v'] . '</a> [' . $lfmV['_c']['playcount']['_v'] . ']<br>';
+    }
+} 
+//Tracks
+if ($typeof == 'tracks') {
+    $lfmA = $this->xml2ary($lfm);
+    $lfmA = $lfmA['toptracks']['_c']['track'];
+foreach($lfmA as $lfmV) {
+        echo '<img height="23px" width="34px" src="' . $lfmV['_c']['image']['0']['_v'] . '"> <a href="' . $lfmV['_c']['url']['_v'] . '">' . $lfmV['_c']['name']['_v'] . '</a> [' . $lfmV['_c']['playcount']['_v'] . ']<br>';
+    }
+}
+//Albums
+if ($typeof == 'albums') {
+    $lfmA = $this->xml2ary($lfm);
+    $lfmA = $lfmA['topalbums']['_c']['album'];
+foreach($lfmA as $lfmV) {
+        echo '<img height="23px" width="34px" src="' . $lfmV['_c']['image']['0']['_v'] . '"> <a href="' . $lfmV['_c']['url']['_v'] . '">' . $lfmV['_c']['name']['_v'] . '</a> [' . $lfmV['_c']['playcount']['_v'] . ']<br>';
+    }
+}
 
-$lfmA = $this->xml2ary($lfm);
-$lfmA = $lfmA['topartists']['_c']['artist'];
-foreach($lfmA as $lfmV) { ?>
-    <img height="23px" width="34px" src="<?php echo $lfmV['_c']['image']['0']['_v']; ?>"> <a href="<?php echo $lfmV['_c']['url']['_v']; ?>"><?php echo $lfmV['_c']['name']['_v']; ?> </a> [<?php echo $lfmV['_c']['playcount']['_v']; ?>]<br>
-<?php } 
 
-        echo $after_widget;
-            }
+
+
+
+echo $after_widget;
+}
 
 // XML to Array
 public function xml2ary(&$string) {

@@ -3,7 +3,7 @@ Contributors: alairock
 Tags: lastfm, lastfm top tracks, lastfm top artists, top, artists, songs, music,
 Requires at least: 3.0.0
 Tested up to: 3.4.1
-Stable tag: 0.1
+Stable tag: 0.2.0
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -44,3 +44,8 @@ It's automatic. You need a LastFM account, and you need to be using it. That's i
 
 = 0.1 =
 * Initial Commit
+
+= 0.2.0 =
+* Updated version to proper format x.x.x
+* Now you can select between Top Artists, Top Albums, Top Tracks
+* You can also select time frame. Last 12 months, Last 6 Months, Last 3 months, Last 7 days, Alltime. (1 month not possible due to lFM limitation)
