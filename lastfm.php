@@ -1,19 +1,19 @@
 <?php
 
 /**
- * Plugin Name: LastFM Top 5 
- * Plugin URI: http://github.com/alairock/LastFM-Top-Artists-Plugin-for-WordPress
- * Description: Displays the top 5 LastFM artists for a particular user.
+ * Plugin Name: LastFM Top Artists
+ * Plugin URI: http://wordpress.org/extend/plugins/lastfm-top-artists/
+ * Description: Displays the top LastFM artists for a particular user.
  * Version: 0.1
  * Author: alairock
  * Author URI: http://sixteenink.com
  * License: GPL2
  **/
 
-class LastFMTop50Widget extends WP_Widget {
-    function LastFMTop50Widget() {
-        $widget_ops = array('classname' => 'LastFMTop50Widget', 'description' => 'Displays top X number of artists' );
-        $this->WP_Widget('LastFMTop50Widget', 'Top LastFM Artists', $widget_ops);
+class LastFMTopArtistsWidget extends WP_Widget {
+    function LastFMTopArtistsWidget() {
+        $widget_ops = array('classname' => 'LastFMTopArtistsWidget', 'description' => 'Displays the top LastFM artists for a particular user.' );
+        $this->WP_Widget('LastFMTopArtistsWidget', 'Top LastFM Artists', $widget_ops);
     }
     function form($instance) {
     $instance = wp_parse_args( (array) $instance, array( 'username' => '', 'latestx' => '5' ) );
@@ -130,4 +130,4 @@ public function ins2ary(&$ary, $element, $pos) {
 }
 
 //add widget
-add_action( 'widgets_init', create_function('', 'return register_widget("LastFMTop50Widget");') );?>
+add_action( 'widgets_init', create_function('', 'return register_widget("LastFMTopArtistsWidget");') );?>
