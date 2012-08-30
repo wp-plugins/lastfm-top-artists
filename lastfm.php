@@ -16,7 +16,7 @@ class LastFMTopArtistsWidget extends WP_Widget {
         $this->WP_Widget('LastFMTopArtistsWidget', 'Top LastFM Artists', $widget_ops);
     }
     function form($instance) {
-    $instance = wp_parse_args( (array) $instance, array( 'username' => '', 'latestx' => '5', 'typeof' => 'artists', 'timeframe' => 'overall', 'author' => 'yes' ) );
+    $instance = wp_parse_args( (array) $instance, array( 'username' => '', 'latestx' => '5', 'typeof' => 'Top Artists', 'timeframe' => 'overall', 'author' => 'yes' ) );
     $username = $instance['username'];
     $latestx = $instance['latestx'];
     $typeof = $instance['typeof'];
@@ -25,7 +25,7 @@ class LastFMTopArtistsWidget extends WP_Widget {
 ?>
         <p><label for="<?php echo $this->get_field_id('username'); ?>">Username: <input class="widefat" id="<?php echo $this->get_field_id('username'); ?>" name="<?php echo $this->get_field_name('username'); ?>" type="text" value="<?php echo attribute_escape($username); ?>" /></label></p>
         <p><label for="<?php echo $this->get_field_id('latestx'); ?>">Number of Artists to show: <input class="widefat" id="<?php echo $this->get_field_id('latestx'); ?>" name="<?php echo $this->get_field_name('latestx'); ?>" type="text" value="<?php echo attribute_escape($latestx); ?>" /></label></p>
-        <p><select class="widefat" id="<?php echo $this->get_field_id('typeof'); ?>" name="<?php echo $this->get_field_name('typeof'); ?>">
+        <p><label>Top Artists/Tracks/Albums</label><select class="widefat" id="<?php echo $this->get_field_id('typeof'); ?>" name="<?php echo $this->get_field_name('typeof'); ?>">
             <option value="<?php echo attribute_escape($typeof); ?>"><?php echo attribute_escape($typeof); ?></option>
             <option value="tracks">Top Tracks</option>
             <option value="artists">Top Artists</option>
@@ -33,7 +33,7 @@ class LastFMTopArtistsWidget extends WP_Widget {
         </select>
         </p>    
 
-        <p><select class="widefat" id="<?php echo $this->get_field_id('timeframe'); ?>" name="<?php echo $this->get_field_name('timeframe'); ?>">
+        <p><label>Timeframe:</label><select class="widefat" id="<?php echo $this->get_field_id('timeframe'); ?>" name="<?php echo $this->get_field_name('timeframe'); ?>">
             <option value="<?php echo attribute_escape($timeframe); ?>"><?php echo attribute_escape($timeframe); ?></option>
             <option value="overall">overall</option>
             <option value="12month">Last 12 Months</option>
