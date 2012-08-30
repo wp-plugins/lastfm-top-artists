@@ -16,7 +16,7 @@ class LastFMTopArtistsWidget extends WP_Widget {
         $this->WP_Widget('LastFMTopArtistsWidget', 'Top LastFM Artists', $widget_ops);
     }
     function form($instance) {
-    $instance = wp_parse_args( (array) $instance, array( 'username' => '', 'latestx' => '5', 'typeof' => 'Top Artists', 'timeframe' => 'overall', 'author' => 'yes' ) );
+    $instance = wp_parse_args( (array) $instance, array( 'username' => '', 'latestx' => '5', 'typeof' => 'artists', 'timeframe' => 'overall', 'author' => 'yes' ) );
     $username = $instance['username'];
     $latestx = $instance['latestx'];
     $typeof = $instance['typeof'];
