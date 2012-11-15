@@ -4,7 +4,7 @@
  * Plugin Name: LastFM Top Artists
  * Plugin URI: http://wordpress.org/extend/plugins/lastfm-top-artists/
  * Description: Displays the top LastFM artists for a particular user.
- * Version: 0.2.0
+ * Version: 0.3.0
  * Author: alairock
  * Author URI: http://sixteenink.com
  * License: GPL2
@@ -31,7 +31,7 @@ class LastFMTopArtistsWidget extends WP_Widget {
             <option value="artists">Top Artists</option>
             <option value="albums">Top Albums</option>
         </select>
-        </p>    
+        </p>
 
         <p><label>Timeframe:</label><select class="widefat" id="<?php echo $this->get_field_id('timeframe'); ?>" name="<?php echo $this->get_field_name('timeframe'); ?>">
             <option value="<?php echo attribute_escape($timeframe); ?>"><?php echo attribute_escape($timeframe); ?></option>
@@ -55,8 +55,8 @@ class LastFMTopArtistsWidget extends WP_Widget {
         $instance['timeframe'] = $new_instance['timeframe'];
         $instance['author'] = $new_instance['author'];
         return $instance;
-    }   
-    
+    }
+
     function widget($args, $instance) {
         extract($args, EXTR_SKIP);
         echo $before_widget;
@@ -64,7 +64,7 @@ class LastFMTopArtistsWidget extends WP_Widget {
         $latestx = empty($instance['latestx']) ? ' ' : apply_filters('widget_latestx', $instance['latestx']);
         $typeof = empty($instance['typeof']) ? ' ' : apply_filters('widget_typeof', $instance['typeof']);
         $timeframe = empty($instance['timeframe']) ? ' ' : apply_filters('widget_timeframe', $instance['timeframe']);
-        $author = empty($instance['author']) ? ' ' : apply_filters('widget_author', $instance['author']);        
+        $author = empty($instance['author']) ? ' ' : apply_filters('widget_author', $instance['author']);
 
 $lfm = file_get_contents('http://ws.audioscrobbler.com/2.0/user/' . $username . '/top' . $typeof . '.xml?period=' . $timeframe . '&limit=' . $latestx);
 echo "<h1>Top " . $latestx . " " . $typeof . "</h1>";
@@ -75,7 +75,7 @@ if ($typeof == 'artists') {
     foreach($lfmA as $lfmV) {
         echo '<img height="23px" width="34px" src="' . $lfmV['_c']['image']['0']['_v'] . '"> <a href="' . $lfmV['_c']['url']['_v'] . '">' . $lfmV['_c']['name']['_v'] . '</a> [' . $lfmV['_c']['playcount']['_v'] . ']<br>';
     }
-} 
+}
 //Tracks
 if ($typeof == 'tracks') {
     $lfmA = $this->xml2ary($lfm);
@@ -134,8 +134,8 @@ public function xml2ary(&$string) {
         } elseif ($r['type']=='close') {
             $ary=&$ary['_p'];
         }
-    }    
-    
+    }
+
     $this->_del_p($mnary);
     return $mnary;
 }
@@ -164,7 +164,7 @@ public function ary2xml($cary, $d=0, $forcetag='') {
             elseif (isset($r['_v'])) $res[]=$r['_v'];
             $res[]=(isset($r['_c']) ? $sp : '')."</$tag>\n";
         }
-        
+
     }
     return implode('', $res);
 }
