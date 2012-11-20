@@ -4,7 +4,7 @@
  * Plugin Name: LastFM Top Artists
  * Plugin URI: http://wordpress.org/extend/plugins/lastfm-top-artists/
  * Description: Displays the top LastFM artists for a particular user.
- * Version: 0.4.0
+ * Version: 0.5.0
  * Author: alairock
  * Author URI: http://sixteenink.com
  * License: GPL2
@@ -67,8 +67,14 @@ class LastFMTopArtistsWidget extends WP_Widget {
 		$author = empty($instance['author']) ? ' ' : apply_filters('widget_author', $instance['author']);
 		$key = '1f3af5debd5cc5c3d3c5ea0019385474';
 		echo $before_widget;
-		$lfm = json_decode(file_get_contents('http://ws.audioscrobbler.com/2.0/?method=user.gettop' . $typeof . 's&user=' . $username . '&api_key=' . $key . '&format=json&limit=' . $latestx . '&period=' . $timeframe . ''), true);
 
+		$fromCache = json_decode(file_get_contents('lastfmcache.txt'), true);
+		$lfm = $fromCache['data'];
+		if ($fromCache['date'] <= time() - 10800 || $fromCache['type'] != $typeof || $fromCache['latestx'] != $latestx || $fromCache['username'] != $username || $fromCache['timeframe'] != $timeframe) {
+			$lfm = json_decode(file_get_contents('http://ws.audioscrobbler.com/2.0/?method=user.gettop' . $typeof . 's&user=' . $username . '&api_key=' . $key . '&format=json&limit=' . $latestx . '&period=' . $timeframe . ''), true);
+			$saveThis = json_encode(array('date' => time(),'type' => $typeof, 'username' => $username, 'timeframe' => $timeframe, 'latestx' => $latestx, 'data' => $lfm));
+			file_put_contents('lastfmcache.txt', $saveThis);
+		}
 		echo "<h1>Top " . $latestx . " " . $typeof . "s</h1>";
 
 
